@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ConstantesVitales {
-  DateTime jour;
+  DateTime date;
+  String idPatient;
   String motdujour;
   double ta; //tentsion arterielle
   double fc; // fréquence cardiaque
@@ -10,12 +11,13 @@ class ConstantesVitales {
   double t; //Température C
   double dextro; // glyxémie
 
-  ConstantesVitales(this.jour, this.motdujour, this.ta, this.fc, this.fr,
-      this.saox, this.t, this.dextro);
+  ConstantesVitales(this.date, this.idPatient, this.motdujour, this.ta, this.fc,
+      this.fr, this.saox, this.t, this.dextro);
 
   Map<String, dynamic> toMap() {
     return {
-      'jour': jour,
+      'date': date,
+      'idPatient': idPatient,
       'motdujour': motdujour,
       'ta': ta,
       'fc': fc,
@@ -27,7 +29,8 @@ class ConstantesVitales {
   }
 
   ConstantesVitales.fromFirestore(Map<String, dynamic> firestore)
-      : jour = firestore['jour'],
+      : date = firestore['date'],
+        idPatient = firestore['idPatient'],
         motdujour = firestore['motdujour'],
         ta = firestore['ta'],
         fc = firestore['fc'],

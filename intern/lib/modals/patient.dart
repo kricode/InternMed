@@ -8,11 +8,13 @@ class Patient {
   String adresse;
   String etatcivil;
   String fonction;
+  String fumeurDepuis;
+  String paquets;
   DateTime operation;
   List<String> habitudes;
 
   Map<String, DateTime> antchiru; // antécédents - chirurgicaux
-  Map<String, double> antmed; // antécédents - médicaux
+  List<String> antmed; // antécédents - médicaux
   List<String> toxiques; // antécédents - toxiques
   String antfam; // antécédents - familiaux
 
@@ -23,6 +25,8 @@ class Patient {
       this.sexe,
       this.adresse,
       this.etatcivil,
+      this.fumeurDepuis,
+      this.paquets,
       this.fonction,
       this.operation,
       this.habitudes,
@@ -45,6 +49,8 @@ class Patient {
       'antchiru': antchiru,
       'antmed': antmed,
       'toxiques': toxiques,
+      'fumeurDepuis': fumeurDepuis,
+      'paquets': paquets,
       'antfam': antfam,
     };
   }
@@ -62,5 +68,7 @@ class Patient {
         antchiru = firestore['antchiru'],
         antmed = firestore['antmed'],
         toxiques = firestore['toxiques'],
+        fumeurDepuis = firestore['fumeurDepuis'],
+        paquets = firestore['paquets'],
         antfam = firestore['antfam'];
 }
