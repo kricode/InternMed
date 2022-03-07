@@ -1,9 +1,8 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
-import 'package:intern/Widgets/Patient-Day-Widgets.dart';
-import 'package:intern/constants.dart';
-import '../Widgets/Form_Widget.dart';
+
+import 'package:intern/Components.dart';
+import 'package:intern/screens/Components/Anciens_Historiques.dart';
+import 'package:intern/screens/Chirurgie_Thoracique/Chirurgie_Thoracique_Historique_Constantes.dart';
 
 class Patient_Day extends StatefulWidget {
   Patient_Day({Key? key}) : super(key: key);
@@ -21,23 +20,22 @@ TextEditingController saox = TextEditingController();
 TextEditingController T = TextEditingController();
 TextEditingController dextro = TextEditingController();
 TextEditingController motDuJour = TextEditingController();
-List<Vitale> listeConstantes = [];
+List<Vitale> listeConstantes = [
+  Vitale(
+      ta, 'Ta/TO', 'assets/images/Constantes_Vitales/blood-pressure-gauge.png'),
+  Vitale(fc, 'Ta/TO', 'assets/images/Constantes_Vitales/blood-pressure.png'),
+  Vitale(
+      fr, 'Ta/TO', 'assets/images/Constantes_Vitales/respiratory-system.png'),
+  Vitale(
+      saox, 'Ta/TO', 'assets/images/Constantes_Vitales/oxygen-saturation.png'),
+  Vitale(T, 'Ta/TO', 'assets/images/Constantes_Vitales/thermometer.png'),
+  Vitale(dextro, 'Ta/TO',
+      'assets/images/Constantes_Vitales/sugar-blood-level.png'),
+];
 
 class _Patient_DayState extends State<Patient_Day> {
   void initState() {
-    listeConstantes.add(Vitale(ta, 'Ta/TO',
-        'assets/images/Constantes_Vitales/blood-pressure-gauge.png'));
-    listeConstantes.add(Vitale(
-        fc, 'Ta/TO', 'assets/images/Constantes_Vitales/blood-pressure.png'));
-    listeConstantes.add(Vitale(fr, 'Ta/TO',
-        'assets/images/Constantes_Vitales/respiratory-system.png'));
-    listeConstantes.add(Vitale(saox, 'Ta/TO',
-        'assets/images/Constantes_Vitales/oxygen-saturation.png'));
-    listeConstantes.add(
-        Vitale(T, 'Ta/TO', 'assets/images/Constantes_Vitales/thermometer.png'));
-    listeConstantes.add(Vitale(dextro, 'Ta/TO',
-        'assets/images/Constantes_Vitales/sugar-blood-level.png'));
-    print(listeConstantes);
+    print('hi ${listeConstantes.length}');
     super.initState();
   }
 
@@ -46,112 +44,24 @@ class _Patient_DayState extends State<Patient_Day> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-        body: SingleChildScrollView(
+    return SingleChildScrollView(
       child: Column(
         children: [
-          Container(
-            // height: height * 0.27,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-              color: _constants.primaryColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: height * 0.02,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.all(8),
-                        child: IconButton(
-                          onPressed: () {
-                            print("Arrow Clicked");
-                          },
-                          icon: Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Colors.white70,
-                          ),
-                        )),
-                    Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Icon(
-                        Icons.info,
-                        color: Colors.white70,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: height * 0.01,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: width * 0.05),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        child: CircleAvatar(
-                            radius: 30,
-                            backgroundImage:
-                                AssetImage('assets/images/man.png')),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: width * 0.03),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: width * 0.6,
-                              child: Text(
-                                "Toumi Abdelkrim",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: height * 0.027,
-                                    color: Colors.white70),
-                              ),
-                            ),
-                            Container(
-                              width: width * 0.5,
-                              child: Text(
-                                " 23 ans",
-                                style: TextStyle(
-                                    fontSize: height * 0.025,
-                                    color: Colors.white70),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: height * 0.04,
-                )
-              ],
-            ),
-          ),
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: height * 0.01,
+                bottom: height * 0.005,
                 left: width * 0.08,
-                top: height * 0.03,
+                top: height * 0.015,
               ),
               child: Container(
                 child: Text(
                   "6ème Jour",
                   style: TextStyle(
                     color: _constants.textColor,
-                    fontSize: height * 0.025,
-                    fontWeight: FontWeight.bold,
+                    fontSize: height * 0.02,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
               ),
@@ -257,7 +167,7 @@ class _Patient_DayState extends State<Patient_Day> {
                                 validator: (val) {
                                   return val!.length > 3
                                       ? null
-                                      : "Entrez votre Nom et Prenom";
+                                      : "Entrez le mot du jour";
                                 },
                                 controller: motDuJour,
                                 style: TextStyle(
@@ -291,10 +201,10 @@ class _Patient_DayState extends State<Patient_Day> {
                                     '+',
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: height * 0.05),
+                                        fontSize: height * 0.03),
                                   )),
                                   decoration: BoxDecoration(
-                                      color: _constants.primaryColor,
+                                      color: _constants.secondaryColor,
                                       borderRadius: BorderRadius.only(
                                           topRight: Radius.circular(10),
                                           bottomRight: Radius.circular(10)),
@@ -321,17 +231,19 @@ class _Patient_DayState extends State<Patient_Day> {
                     children: [
                       Card_Icon(
                           important: true,
-                          colorBackground: _constants.primaryColor,
+                          colorBackground: _constants.secondaryColor,
                           width: width,
-                          imagePath: "assets/icons/record.png",
-                          title: "Historique",
+                          screen: Chirurgie_Thoracique_Historique_Constantes(),
+                          imagePath: "assets/icons/record-check.png",
+                          title: "Historique\ncourrant",
                           height: height),
                       Card_Icon(
                           important: false,
-                          colorBackground: _constants.primaryColor,
+                          colorBackground: _constants.secondaryColor,
                           width: width,
-                          imagePath: "assets/icons/id-card.png",
-                          title: "Informations",
+                          screen: Anciens_Historiques(),
+                          imagePath: "assets/icons/past.png",
+                          title: "Anciens\nHistoriques",
                           height: height),
                     ],
                   ),
@@ -341,7 +253,7 @@ class _Patient_DayState extends State<Patient_Day> {
           )
         ],
       ),
-    ));
+    );
   }
 }
 

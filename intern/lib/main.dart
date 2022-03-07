@@ -1,15 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:intern/screens/Doctor_Singup_Informations.dart';
-import 'package:intern/screens/Historique.dart';
-import 'package:intern/screens/Patient_Day.dart';
-import 'package:intern/screens/Services_Screen.dart';
-import 'package:intern/screens/addpatient.dart';
-import 'package:intern/screens/List_Patients.dart';
-import './constants.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:intern/Redirect.dart';
+import 'package:intern/screens/Admin_Processing.dart';
+import 'package:intern/screens/Components/Patient_Edit.dart';
+import 'package:intern/screens/Doctor_Singup_Informations.dart';
+import 'package:intern/screens/Chirurgie_Thoracique/Chirurgie_Thoracique_Historique_Constantes.dart';
+import 'package:intern/screens/Patient_Details.dart';
+import 'package:intern/screens/Services_Screen.dart';
 import './screens/Login.dart';
-export '';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,15 +27,16 @@ class MyApp extends StatelessWidget {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    User? result = FirebaseAuth.instance.currentUser;
 
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: 'Poppins',
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/historique',
+      initialRoute: result == null ? '/' : '/services',
       routes: Navigate.routes,
     );
   }
@@ -43,11 +45,12 @@ class MyApp extends StatelessWidget {
 class Navigate {
   static Map<String, Widget Function(BuildContext)> routes = {
     '/': (context) => LoginPage(),
-    //  '/listPatients': (context) => List_Patients(),
-    // '/addpatient': (context) => AddPatient(),
-    '/patientDay': (context) => Patient_Day(),
     '/services': (context) => Services_Screen(),
     '/signupinfo': (context) => Doctor_Signup_Informations(),
-    '/historique': (context) => Historique(),
+    '/historiqueConstantes': (context) =>
+        Chirurgie_Thoracique_Historique_Constantes(),
+    '/patientEdit': (context) => Patient_Edit(),
+    '/adminProcessing': (context) => Admin_Processing(),
+    '/redirect': (context) => Redirect(),
   };
 }

@@ -1,12 +1,17 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, file_names
 
-import 'dart:ffi';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
+import 'package:intern/Components.dart';
 import 'package:intern/Widgets/Clipper.dart';
 import 'package:intern/constants.dart';
+import 'package:intern/database/FirebaseAuth.dart';
+import 'package:intern/screens/Doctor_Singup_Informations.dart';
+import 'package:intern/screens/List_Patients.dart';
+import 'package:intern/screens/Services_Screen.dart';
 import '../database/firestoreService.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,8 +21,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final FirestoreService _db = FirestoreService();
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
     Constants _constants = Constants();
     setState(() {});
     double height = MediaQuery.of(context).size.height;
@@ -116,138 +124,144 @@ class _LoginPageState extends State<LoginPage> {
                                   "assets/images/doctor_welcome.png"),
                             ),
                           )),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: width * 0.05, vertical: height * 0.02),
-                        child: InkWell(
-                          onTap: () {
-                            print('signin');
-                          },
-                          child: Ink(
-                            color: Colors.white60,
-                            child: Container(
-                              height: height * 0.077,
-                              width: width * 0.9,
-                              decoration: BoxDecoration(
-                                  color: _constants.primaryColor,
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(6),
+                      isLoading
+                          ? Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: width * 0.05,
+                                  vertical: height * 0.02),
+                              child: Container(
+                                  height: height * 0.077,
+                                  width: width * 0.9,
+                                  decoration: BoxDecoration(
+                                      color: _constants.primaryColor,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(6),
+                                      )),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
                                   )),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: width * 0.2,
-                                    ),
-                                    Image(
-                                      width: width * 0.09,
-                                      image:
-                                          AssetImage("assets/icons/google.png"),
-                                    ),
-                                    SizedBox(
-                                      width: width * 0.05,
-                                    ),
-                                    Text(
-                                      'Se Connecter',
-                                      style: TextStyle(
-                                          fontSize: height * 0.02,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.05,
-                        ),
-                        child: Container(
-                          height: height * 0.077,
-                          width: width * 0.9,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: _constants.secondaryColor, width: 2),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(6),
-                              )),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: width * 0.2,
-                                ),
-                                Image(
-                                  width: width * 0.09,
-                                  image: AssetImage("assets/icons/signup.png"),
-                                ),
-                                SizedBox(
-                                  width: width * 0.05,
-                                ),
-                                Text(
-                                  'Créer un compte',
-                                  style: TextStyle(
-                                      fontSize: height * 0.02,
-                                      color: _constants.secondaryColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                            )
+                          : Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: width * 0.05,
+                                  vertical: height * 0.02),
+                              child: InkWell(
+                                onTap: () async {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  FirebaseService service =
+                                      new FirebaseService();
+                                  try {
+                                    User? user =
+                                        await FirebaseService.signInWithGoogle(
+                                            context: context);
+                                    setState(() {
+                                      if (user != null) {
+                                        Get.offAll(() => Redirect());
+                                      } else {
+                                        showMessage("Connectez vous!");
+                                      }
+                                    });
 
-                      /*  Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            AnimatedContainer(
-                              margin: EdgeInsets.only(
-                                  top: height * 0.1, left: width * 0.2),
-                              decoration: BoxDecoration(
-                                  color: Color(0xFF4D2663),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(100))),
-                              duration: Duration(milliseconds: 1500),
-                              child: GestureDetector(
-                                onTap: () {
-                                  print("gmail Pressed");
+                                    print(user!.email);
+                                  } catch (e) {
+                                    if (e is FirebaseAuthException) {
+                                      showMessage(e.message!);
+                                      print('signin');
+                                    }
+                                  }
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 },
-                                child: Padding(
-                                  padding: const EdgeInsets.all(20),
-                                  child: Image(
-                                    width: width * 0.1,
-                                    image: AssetImage("assets/icons/google.png"),
+                                child: Ink(
+                                  color: Colors.white60,
+                                  child: Container(
+                                    height: height * 0.077,
+                                    width: width * 0.9,
+                                    decoration: BoxDecoration(
+                                        color: _constants.primaryColor,
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(6),
+                                        )),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: width * 0.2,
+                                          ),
+                                          Image(
+                                            width: width * 0.09,
+                                            image: AssetImage(
+                                                "assets/icons/google.png"),
+                                          ),
+                                          SizedBox(
+                                            width: width * 0.05,
+                                          ),
+                                          Text(
+                                            'Se Connecter',
+                                            style: TextStyle(
+                                                fontSize: height * 0.02,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: height * 0.1, left: 20),
-                              child: Text("Veuillez Vous Connecter",
-                                  style: TextStyle(
-                                      color: Color(0xFF4D2663),
-                                      fontSize: height * 0.02)),
-                            )
-                          ],
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: width * 0.05,
                         ),
-                      ),*/
-                      /* Align(
-                          alignment: Alignment.bottomCenter,
+                        child: InkWell(
+                          onTap: () {
+                            Get.to(() => Doctor_Signup_Informations());
+                          },
                           child: Container(
-                              margin: EdgeInsets.only(top: height * 0.15),
-                              child: Text(
-                                  "Aucun Droit is preserved XD \n fuck off if you dont like it",
-                                  style: TextStyle(
-                                      color: Color(0xff454545),
-                                      fontSize: height * 0.019))))*/
+                            height: height * 0.077,
+                            width: width * 0.9,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: _constants.secondaryColor, width: 2),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(6),
+                                )),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: width * 0.2,
+                                  ),
+                                  Image(
+                                    width: width * 0.09,
+                                    image:
+                                        AssetImage("assets/icons/signup.png"),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.05,
+                                  ),
+                                  Text(
+                                    'Créer un compte',
+                                    style: TextStyle(
+                                        fontSize: height * 0.02,
+                                        color: _constants.secondaryColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       Spacer(),
                       Align(
                         alignment: Alignment.bottomRight,
@@ -279,5 +293,24 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void showMessage(String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(message),
+            actions: [
+              TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 }

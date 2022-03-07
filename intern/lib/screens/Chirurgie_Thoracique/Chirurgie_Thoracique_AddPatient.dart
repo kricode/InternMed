@@ -5,14 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:intern/Widgets/ImportantWidgets.dart';
 import 'package:intern/database/firestoreService.dart';
-import 'package:intern/modals/patient.dart';
+import 'package:intern/modals/patient_Chirurgie_Thoracique.dart';
 import 'package:intern/screens/Services_Screen.dart';
-import '../Widgets/Form_Widget.dart';
-import '../constants.dart';
+import '../../Widgets/Form_Widget.dart';
+import '../../constants.dart';
 
 class AddPatient extends StatefulWidget {
-  AddPatient({Key? key, required this.service}) : super(key: key);
+  AddPatient({Key? key, required this.service, required this.doctorId})
+      : super(key: key);
   final Service service;
+  final String doctorId;
   @override
   _AddPatientState createState() => _AddPatientState();
 }
@@ -50,6 +52,7 @@ class _AddPatientState extends State<AddPatient> {
   bool chirurgieEfefctue = false;
   DateTime operation = DateTime.now();
   DateTime admission = DateTime.now();
+  DateTime dateNaissance = DateTime.now();
 
   ////////////////////////:
   List<String> habitudeList = [];
@@ -58,6 +61,9 @@ class _AddPatientState extends State<AddPatient> {
   DateTime antChiru = DateTime.now();
   //////////////////////////////////
   TextEditingController antmed = TextEditingController();
+  bool chimio = false;
+  DateTime chimioDate = DateTime.now();
+
   List<String> antmedList = [];
   bool fumeur = false;
 
@@ -79,7 +85,7 @@ class _AddPatientState extends State<AddPatient> {
       });
   }
 
-  Future<void> _selectDateAdmission(BuildContext context, DateTime date) async {
+  Future<void> _selectdateNaissance(BuildContext context, DateTime date) async {
     DateTime date = DateTime.now();
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -88,7 +94,20 @@ class _AddPatientState extends State<AddPatient> {
         lastDate: DateTime(2101));
     if (picked != null && picked != date)
       setState(() {
-        admission = picked;
+        dateNaissance = picked;
+      });
+  }
+
+  Future<void> _selectDatechimio(BuildContext context, DateTime date) async {
+    DateTime date = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: date,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != date)
+      setState(() {
+        chimioDate = picked;
       });
   }
 
@@ -123,12 +142,15 @@ class _AddPatientState extends State<AddPatient> {
           SizedBox(
             height: height * 0.02,
           ),
-          ServiceHeader(
-            constants: _constants,
-            width: width,
-            height: height,
-            title: 'Nouveau Patient',
-            imagePath: widget.service.blueimagePath,
+          Padding(
+            padding: EdgeInsets.only(left: width * 0.04),
+            child: ServiceHeader(
+              constants: _constants,
+              width: width,
+              height: height,
+              title: 'Nouveau Patient',
+              imagePath: widget.service.blueimagePath,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 15.0),
@@ -152,17 +174,7 @@ class _AddPatientState extends State<AddPatient> {
                             width: width,
                             label: 'Date d\'admission: ',
                             imagePath: 'assets/icons/bed.png'),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 0),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary: _constants.secondaryColor),
-                              onPressed: () {
-                                _selectDateChirurgie(context, operation);
-                              },
-                              child:
-                                  Text("${operation.toLocal()}".split(' ')[0])),
-                        )
+                        SelectDate(admission)
                       ],
                     ),
                     InputNumber(
@@ -188,7 +200,7 @@ class _AddPatientState extends State<AddPatient> {
                             style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[500],
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w300),
                           ),
                         ],
                       ),
@@ -287,9 +299,9 @@ class _AddPatientState extends State<AddPatient> {
                                   child: Text(
                                     value,
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        color: Color(0xff48acf0),
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 16,
+                                      color: Color(0xff48acf0),
+                                    ),
                                   ),
                                 );
                               }).toList()),
@@ -301,7 +313,7 @@ class _AddPatientState extends State<AddPatient> {
                       children: [
                         TextLabel(
                             width: width,
-                            label: 'Date Chirurgie',
+                            label: 'Date Naissance',
                             imagePath: 'assets/icons/calendar.png'),
                         Padding(
                           padding: const EdgeInsets.only(right: 10.0),
@@ -309,7 +321,7 @@ class _AddPatientState extends State<AddPatient> {
                               style: ElevatedButton.styleFrom(
                                   primary: _constants.secondaryColor),
                               onPressed: () {
-                                _selectDateChirurgie(context, operation);
+                                _selectdateNaissance(context, operation);
                               },
                               child:
                                   Text("${operation.toLocal()}".split(' ')[0])),
@@ -327,7 +339,28 @@ class _AddPatientState extends State<AddPatient> {
                         height: height,
                         field: habitude,
                         list: habitudeList,
-                        constants: _constants),
+                        color: _constants.secondaryColor),
+                    habitudeList.length != 0
+                        ? Container(
+                            child: MediaQuery.removePadding(
+                              context: context,
+                              removeTop: true,
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: habitudeList.length,
+                                  itemBuilder: (BuildContext context, index) {
+                                    return HabitArea(
+                                        width: width,
+                                        height: height,
+                                        field: habitude,
+                                        list: habitudeList,
+                                        hint: habitudeList[index],
+                                        action: 'remove',
+                                        color: _constants.secondaryColor);
+                                  }),
+                            ),
+                          )
+                        : SizedBox(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +423,7 @@ class _AddPatientState extends State<AddPatient> {
                         list: toxicList,
                         hint: "Ajoutez un produit toxique:",
                         action: 'add',
-                        constants: _constants),
+                        color: _constants.secondaryColor),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -450,7 +483,95 @@ class _AddPatientState extends State<AddPatient> {
                         list: antmedList,
                         hint: 'Ajoutez un medicaments',
                         action: "add",
-                        constants: _constants),
+                        color: _constants.secondaryColor),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextLabel(
+                                width: width,
+                                label: "Chimiothérapie",
+                                imagePath: 'assets/icons/chemotherapy.png'),
+                            AnimatedContainer(
+                              duration: Duration(milliseconds: 1500),
+                              child: chimio == true
+                                  ? Container(
+                                      margin: EdgeInsets.only(
+                                          left: width * 0.18,
+                                          top: height * 0.018),
+                                      child: Text(
+                                        "Derniere Seance",
+                                        style: TextStyle(
+                                            color: _constants.hintColor),
+                                      ),
+                                    )
+                                  : null,
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CupertinoSwitch(
+                              activeColor: _constants.secondaryColor,
+                              value: chimio,
+                              onChanged: (value) {
+                                setState(() {
+                                  chimio = value;
+                                  if (chimio == false) {}
+                                  print('chimio? $chimio');
+                                });
+                              },
+                            ),
+                            AnimatedContainer(
+                              duration: Duration(milliseconds: 1500),
+                              child: chimio == true
+                                  ? Padding(
+                                      padding: EdgeInsets.only(
+                                          right: 10.0, top: height * 0.01),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _selectDatechimio(
+                                              context, chimioDate);
+                                        },
+                                        child: Container(
+                                          width: width * 0.33,
+                                          height: height * 0.048,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black38,
+                                                  blurRadius: 5,
+                                                  // offset: Offset(5.0, .0)
+                                                ),
+                                              ],
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              border: Border.all(
+                                                  color: Colors.black38)),
+                                          child: Center(
+                                            child: Text(
+                                              "${chimioDate.toLocal()}"
+                                                  .split(' ')[0],
+                                              style: TextStyle(
+                                                  color: _constants
+                                                      .InputIconColor),
+                                            ),
+                                          ),
+                                        ),
+                                      ))
+                                  : null,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
 
                     TextLabel(
                         width: width,
@@ -510,31 +631,44 @@ class _AddPatientState extends State<AddPatient> {
                         child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                Patient patient = Patient(
-                                    '1',
-                                    nom.text,
-                                    salle.text,
-                                    selectedSexe.toString(),
-                                    adresse.text,
-                                    selectedEtatCivil.toString(),
-                                    fumeurDepuis.text,
-                                    nbrPaquet.text,
-                                    fonction.text,
-                                    operation,
-                                    habitudeList,
-                                    antchiru,
-                                    antmedList,
-                                    toxicList,
-                                    antfam.text);
+                                Patient_Chirurgie_Thoracique patient =
+                                    Patient_Chirurgie_Thoracique(
+                                        '1',
+                                        nom.text,
+                                        salle.text,
+                                        selectedSexe.toString(),
+                                        adresse.text,
+                                        selectedEtatCivil.toString(),
+                                        fumeurDepuis.text,
+                                        nbrPaquet.text,
+                                        dateNaissance,
+                                        fonction.text,
+                                        null,
+                                        habitudeList,
+                                        antchiru,
+                                        antmedList,
+                                        toxicList,
+                                        antfam.text);
+                                String patientID =
+                                    ' ${nom.text}-${dateNaissance.toString()}';
+                                List<String> Medecin_Patient = [
+                                  widget.doctorId,
+                                  patientID
+                                ];
                                 Map<String, dynamic> patientFirestore =
                                     patient.toMap();
                                 print(patientFirestore);
-                                firestoreService.savePatient('Mira', patient);
+                                firestoreService
+                                    .savePatient_Chirurgie_Thoracique(
+                                        widget.doctorId,
+                                        patient,
+                                        'Chirurgie_Thoracique')
+                                    .then((value) => print('done'));
                                 print('done');
                               }
                             },
                             child: Text('Valider',
-                                style: TextStyle(fontSize: height * 0.03)))),
+                                style: TextStyle(fontSize: height * 0.025)))),
                     SizedBox(
                       height: height * 0.02,
                     )
@@ -546,5 +680,35 @@ class _AddPatientState extends State<AddPatient> {
         ],
       ),
     ));
+  }
+
+  SelectDate(DateTime date) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 0),
+      child: ElevatedButton(
+          style: ElevatedButton.styleFrom(primary: _constants.secondaryColor),
+          onPressed: () {
+            Future<void> _selectDateAdmission(
+                BuildContext context, DateTime date) async {
+              DateTime date = DateTime.now();
+              final DateTime? picked = await showDatePicker(
+                  context: context,
+                  initialDate: date,
+                  firstDate: DateTime(2015, 8),
+                  lastDate: DateTime(2101));
+              if (picked != null && picked != date)
+                setState(() {
+                  date = picked;
+                });
+            }
+
+            _selectDateAdmission(context, date);
+          },
+          child: Text("${date.toLocal()}".split(' ')[0])),
+    );
+  }
+
+  addPatientThoracique() {
+    return;
   }
 }

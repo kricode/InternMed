@@ -39,7 +39,12 @@ dependencies:
   google_sign_in: ^5.2.1
   cloud_firestore: 
   google_fonts:
+  get: ^4.6.1 
   intl:
+  shared_preferences: ^2.0.0-nullsafety
+
+
+ 
 
 dev_dependencies:
   flutter_test:
@@ -67,7 +72,7 @@ flutter:
   assets:
   - assets/images/doctor_welcome.png
   - assets/icons/
-  - assets/images/man.png
+  - assets/images/
   - assets/images/woman.png
   - assets/images/Constantes_Vitales/
   - assets/images/Services_Home/

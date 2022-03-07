@@ -1,7 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:intern/constants.dart';
+import 'package:intern/screens/List_Patients.dart';
 
 Constants _constants = Constants();
+
+class ButtonConfirm extends StatefulWidget {
+  ButtonConfirm({
+    Key? key,
+    required this.width,
+    required this.height,
+  }) : super(key: key);
+
+  final double width;
+  final double height;
+
+  @override
+  State<ButtonConfirm> createState() => _ButtonConfirmState();
+}
+
+class _ButtonConfirmState extends State<ButtonConfirm> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: widget.height * 0.025),
+      child: Center(
+        child: Container(
+          width: widget.width * 0.4,
+          height: widget.height * 0.06,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7),
+            color: constants.gynecoColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                blurRadius: 5,
+                // offset: Offset(5.0, .0)
+              ),
+            ],
+          ),
+          child: Center(
+              child: Text(
+            "Valider",
+            style:
+                TextStyle(fontSize: widget.height * 0.025, color: Colors.white),
+          )),
+        ),
+      ),
+    );
+  }
+}
 
 class BigTextWidget extends StatelessWidget {
   const BigTextWidget({
