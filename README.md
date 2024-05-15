@@ -9,6 +9,13 @@ InternMed represents the culmination of extensive collaboration and innovation, 
 - **Brainstorming Sessions:** The project manager facilitated brainstorming sessions to generate innovative ideas and solutions, fostering creativity and collaboration among team members.
 - **Iterative Refinement:** InternMed underwent iterative refinement cycles, led by the project manager, who meticulously analyzed feedback from medical professionals and stakeholders to iteratively enhance the application's functionality and usability.
 - **Prompt Implementation of Changes:** Changes and improvements suggested during the development process were promptly implemented by the project manager, ensuring that InternMed continuously evolved to meet the evolving needs of its users.
+- **Implemented MVC Pattern:** InternMed follows the Model-View-Controller (MVC) architectural pattern, separating the application into three interconnected components - the model (data), the view (user interface), and the controller (logic). This design ensures clear separation of concerns and facilitates maintainability and scalability of the application codebase.
+- **State and Route Management with GetX:** GetX is utilized for efficient state management and route management in InternMed, providing a lightweight yet powerful solution for managing application state and navigation. Its reactive nature simplifies development and enhances performance, contributing to a seamless user experience.
+
+## Frontend Customizations:
+
+- **Color Palette:** The color palette for InternMed's user interface was meticulously chosen by the project manager to create a visually appealing and cohesive design. Colors were selected to enhance readability, usability, and overall aesthetics.
+- **Icons:** Custom icons were designed and integrated into InternMed's user interface to provide intuitive visual cues and enhance the user experience. Each icon was carefully crafted to represent its corresponding action or feature, ensuring clarity and ease of use.
 
 ## Features:
 
